@@ -1,13 +1,13 @@
 {
   "name": "basiccache",
   "description": "An extremely basic cache with a simple expiry system",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Dave Eddy <dave@daveeddy.com> (http://www.daveeddy.com)",
   "main": "./basiccache.js",
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "git://github.com/bahamas10/node-basiccache.git"
+    "url": "git://github.com/bahamas10/basiccache.js.git"
   },
   "scripts": {
     "test": "for f in examples/*; do echo \"> $f\"; node \"$f\" || exit 1; echo; done; echo 'passed!'; exit 0"
