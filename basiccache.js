@@ -50,10 +50,20 @@ BasicCache.prototype.set = function(key, value, expires) {
 };
 
 /**
- * remove an item from the cach
+ * remove an item from the cache
  */
 BasicCache.prototype.remove = function(key) {
   delete this.cache[key];
+};
+
+/**
+ * clear all items from the cache
+ */
+BasicCache.prototype.clear = function() {
+  for (var key in this.cache) {
+    if (!this.cache.hasOwnProperty(key)) continue;
+    delete this.cache[key];
+  }
 };
 
 /**

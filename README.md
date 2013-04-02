@@ -69,6 +69,10 @@ this specific cache entry expires, defaults to 5 minutes
 
 remove an entry from the cache, no errors are throw if they key doesn't exist
 
+### cache.clear()
+
+remove all entries from the cache
+
 License
 -------
 
