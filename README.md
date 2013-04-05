@@ -11,7 +11,7 @@ Installation
 Usage
 -----
 
-#### first
+### first
 
 node
 ``` js
@@ -21,9 +21,10 @@ var BasicCache = require('basiccache');
 html
 ``` html
 <script src="basiccache.min.js"></script>
+<!-- // defines BasicCache() -->
 ```
 
-#### then
+### then
 
 ``` js
 var cache = new BasicCache();
@@ -63,11 +64,11 @@ exist, or has been invalidated, this function will return `undefined`
 ### cache.set(key, value, [expires])
 
 set a key to a value, `expires` is the number of milliseconds from now when
-this specific cache entry expires, defaults to 5 minutes
+this specific cache entry expires, defaults to 5 * 60 * 1000 (5 minutes)
 
 ### cache.remove(key)
 
-remove an entry from the cache, no errors are throw if they key doesn't exist
+remove an entry from the cache, no errors are thrown if the key doesn't exist or is already invalidated
 
 ### cache.clear()
 
