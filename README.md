@@ -55,10 +55,12 @@ Function
 ### new BasicCache([opts])
 
 - `opts.debug`: print debug info to the console on stderr, defaults to `false`
+- `opts.prefix`: string to prefix the cache keys with for the internal cache object,
+defaults to `basiccache_`
 
 ### cache.get(key)
 
-returns the cached item if it exists and hasn't expired.  if the item doesn't
+returns the cached item if it exists and hasn't expired.  If the item doesn't
 exist, or has been invalidated, this function will return `undefined`
 
 ### cache.set(key, value, [expires])
