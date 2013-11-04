@@ -8,6 +8,7 @@
  */
 function BasicCache(opts) {
   this.opts = opts || {};
+  this.opts.prefix = this.opts.prefix || 'basiccache_';
   this.cache = {};
 }
 
@@ -21,19 +22,19 @@ if (typeof exports !== 'undefined') {
  */
 BasicCache.prototype.get = function(key) {
   var d = Date.now();
-  if (this.cache[key] === undefined) {
+  if (this.cache[this.opts.prefix + key] === undefined) {
     this.debug('failed to pull "' + key + '" from cache');
     return;
   }
 
-  if (d > this.cache[key].invalid) {
-    this.debug('key "' + key + '" expired at: ' + this.cache[key].invalid);
-    delete this.cache[key];
+  if (d > this.cache[this.opts.prefix + key].invalid) {
+    this.debug('key "' + key + '" expired at: ' + this.cache[this.opts.prefix + key].invalid);
+    delete this.cache[this.opts.prefix + key];
     return;
   }
 
   this.debug('key "' + key + '" pulled from cache');
-  return this.cache[key].value;
+  return this.cache[this.opts.prefix + key].value;
 };
 
 /**
@@ -43,17 +44,17 @@ BasicCache.prototype.get = function(key) {
  */
 BasicCache.prototype.set = function(key, value, expires) {
   var invalid = Date.now() + (expires || 5*60*1000);
-  this.cache[key] = {};
-  this.cache[key].value = value;
-  this.cache[key].invalid = invalid;
-  return this.cache[key].invalid;
+  this.cache[this.opts.prefix + key] = {};
+  this.cache[this.opts.prefix + key].value = value;
+  this.cache[this.opts.prefix + key].invalid = invalid;
+  return this.cache[this.opts.prefix + key].invalid;
 };
 
 /**
  * remove an item from the cache
  */
 BasicCache.prototype.remove = function(key) {
-  delete this.cache[key];
+  delete this.cache[this.opts.prefix + key];
 };
 
 /**
@@ -61,7 +62,8 @@ BasicCache.prototype.remove = function(key) {
  */
 BasicCache.prototype.clear = function() {
   for (var key in this.cache) {
-    if (!this.cache.hasOwnProperty(key)) continue;
+    if (!this.cache.hasOwnProperty(key))
+      continue;
     delete this.cache[key];
   }
 };
@@ -70,5 +72,6 @@ BasicCache.prototype.clear = function() {
  * internal debug function
  */
 BasicCache.prototype.debug = function() {
-  if (this.opts.debug) console.log.apply(console, arguments);
+  if (this.opts.debug)
+    console.log.apply(console, arguments);
 };
