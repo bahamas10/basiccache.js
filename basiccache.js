@@ -8,7 +8,7 @@
  */
 function BasicCache(opts) {
   if (!(this instanceof BasicCache)) {
-    return new BasicCache(opts)
+    return new BasicCache(opts);
   }
 
   opts = opts || {};
@@ -24,9 +24,10 @@ function BasicCache(opts) {
       self.purge();
     }, opts.purgeInterval);
   }
-  if ('function' == typeof opts.debug) {
+
+  if ('function' === typeof opts.debug) {
     self.debug = opts.debug;
-  } else if (!opts.debug) {
+  } else {
     self.debug = function noop() { };
   }
 }
@@ -93,26 +94,19 @@ BasicCache.prototype.clear = function() {
  * Clear expired items
  */
 BasicCache.prototype.purge = function() {
-  var d = Date.now(), count = 0
+  var d = Date.now(), count = 0;
   for (var key in this.cache) {
     if (this.cache[key] && d > this.cache[key].expires_at) {
       delete this.cache[key];
       count += 1;
     }
   }
-  this.debug('Purged %s expired item(s).', count)
-}
+  this.debug('Purged %s expired item(s).', count);
+};
 
 /**
  * Clear purge interval
  */
 BasicCache.prototype.sleep = function() {
-  clearInterval(this._purge_timer)
-}
-
-/**
- * internal debug function
- */
-BasicCache.prototype.debug = function() {
-  console.log.apply(console, arguments);
+  clearInterval(this._purge_timer);
 };
