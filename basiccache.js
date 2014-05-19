@@ -7,9 +7,28 @@
  * License: MIT
  */
 function BasicCache(opts) {
-  this.opts = opts || {};
-  this.opts.prefix = this.opts.prefix || 'basiccache_';
-  this.cache = {};
+  if (!(this instanceof BasicCache)) {
+    return new BasicCache(opts)
+  }
+
+  opts = opts || {};
+  opts.prefix = opts.prefix || 'basiccache_';
+
+  var self = this;
+
+  self.opts = opts;
+  self.cache = {};
+
+  if (opts.purgeInterval) {
+    self._purge_timer = setInterval(function() {
+      self.purge();
+    }, opts.purgeInterval);
+  }
+  if ('function' == typeof opts.debug) {
+    self.debug = opts.debug;
+  } else if (!opts.debug) {
+    self.debug = function noop() { };
+  }
 }
 
 if (typeof exports !== 'undefined') {
@@ -22,19 +41,18 @@ if (typeof exports !== 'undefined') {
  */
 BasicCache.prototype.get = function(key) {
   var d = Date.now();
-  if (this.cache[this.opts.prefix + key] === undefined) {
-    this.debug('failed to pull "' + key + '" from cache');
+  key = this.opts.prefix + key;
+  if (this.cache[key] === undefined) {
+    this.debug('failed to pull "%s" from cache', key);
     return;
   }
-
-  if (d > this.cache[this.opts.prefix + key].invalid) {
-    this.debug('key "' + key + '" expired at: ' + this.cache[this.opts.prefix + key].invalid);
-    delete this.cache[this.opts.prefix + key];
+  if (d > this.cache[key].expires_at) {
+    this.debug('key "%s" expired at: %s', key, this.cache[key].expires_at);
+    delete this.cache[key];
     return;
   }
-
-  this.debug('key "' + key + '" pulled from cache');
-  return this.cache[this.opts.prefix + key].value;
+  this.debug('key "%s" pulled from cache', key);
+  return this.cache[key].value;
 };
 
 /**
@@ -43,18 +61,20 @@ BasicCache.prototype.get = function(key) {
  * expires defaults to 5 minutes
  */
 BasicCache.prototype.set = function(key, value, expires) {
-  var invalid = Date.now() + (expires || 5*60*1000);
-  this.cache[this.opts.prefix + key] = {};
-  this.cache[this.opts.prefix + key].value = value;
-  this.cache[this.opts.prefix + key].invalid = invalid;
-  return this.cache[this.opts.prefix + key].invalid;
+  key = this.opts.prefix + key;
+  this.cache[key] = {
+    value: value,
+    expires_at: Date.now() + (expires || 5*60*1000)
+  };
+  return this.cache[key].expires_at;
 };
 
 /**
  * remove an item from the cache
  */
 BasicCache.prototype.remove = function(key) {
-  delete this.cache[this.opts.prefix + key];
+  key = this.opts.prefix + key;
+  delete this.cache[key];
 };
 
 /**
@@ -68,10 +88,31 @@ BasicCache.prototype.clear = function() {
   }
 };
 
+
+/**
+ * Clear expired items
+ */
+BasicCache.prototype.purge = function() {
+  var d = Date.now(), count = 0
+  for (var key in this.cache) {
+    if (this.cache[key] && d > this.cache[key].expires_at) {
+      delete this.cache[key];
+      count += 1;
+    }
+  }
+  this.debug('Purged %s expired item(s).', count)
+}
+
+/**
+ * Clear purge interval
+ */
+BasicCache.prototype.sleep = function() {
+  clearInterval(this._purge_timer)
+}
+
 /**
  * internal debug function
  */
 BasicCache.prototype.debug = function() {
-  if (this.opts.debug)
-    console.log.apply(console, arguments);
+  console.log.apply(console, arguments);
 };
