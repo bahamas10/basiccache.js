@@ -10,7 +10,7 @@
     "url": "git://github.com/bahamas10/basiccache.js.git"
   },
   "scripts": {
-    "test": "for f in examples/*; do echo \"> $f\"; node \"$f\" || exit 1; echo; done; echo 'passed!'; exit 0"
+    "test": "for f in tests/*; do echo \"> $f\"; node \"$f\" || exit 1; echo; done; echo 'passed!'; exit 0"
   },
   "dependencies": {},
   "devDependencies": {},
