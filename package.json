@@ -1,7 +1,7 @@
 {
   "name": "basiccache",
   "description": "An extremely basic cache with a simple expiry system",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Dave Eddy <dave@daveeddy.com> (http://www.daveeddy.com)",
   "main": "./basiccache.js",
   "contributors": [],
