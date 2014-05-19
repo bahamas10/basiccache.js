@@ -1,5 +1,5 @@
 var BasicCache = require('../');
-var cache = new BasicCache({debug: true});
+var cache = new BasicCache({debug: console.log});
 
 // set a key for 5 seconds
 cache.set('key', new Date(), 5 * 1000);
