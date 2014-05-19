@@ -14,11 +14,13 @@ Usage
 ### first
 
 node
+
 ``` js
 var BasicCache = require('basiccache');
 ```
 
 html
+
 ``` html
 <script src="basiccache.min.js"></script>
 <!-- // defines BasicCache() -->
@@ -54,9 +56,10 @@ Function
 
 ### new BasicCache([opts])
 
-- `opts.debug`: print debug info to the console on stderr, defaults to `false`
+- `opts.debug`: a function to use to print debug messages, defaults to a `noop`
 - `opts.prefix`: string to prefix the cache keys with for the internal cache object,
 defaults to `basiccache_`
+- `opts.purgeInterval`: a time, in ms, to purge the cache of expired items, defaults to no timer`
 
 ### cache.get(key)
 
@@ -75,6 +78,14 @@ remove an entry from the cache, no errors are thrown if the key doesn't exist or
 ### cache.clear()
 
 remove all entries from the cache
+
+### cache.purge()
+
+remove expired items from the cache
+
+### cache.sleep()
+
+clear the purgeInterval if it was set
 
 License
 -------
