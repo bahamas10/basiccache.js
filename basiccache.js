@@ -13,22 +13,18 @@ function BasicCache(opts) {
 
   opts = opts || {};
   opts.prefix = opts.prefix || 'basiccache_';
+  opts.expires = opts.expires || opts.expire || opts.ttl;
 
-  var self = this;
-
-  self.opts = opts;
-  self.cache = {};
+  this.opts = opts;
+  this.cache = {};
 
   if (opts.purgeInterval) {
-    self._purge_timer = setInterval(function() {
-      self.purge();
-    }, opts.purgeInterval);
+    this.startTimer(opts.purgeInterval)
   }
-
-  if ('function' === typeof opts.debug) {
-    self.debug = opts.debug;
+  if ('function' == typeof opts.debug) {
+    this.debug = opts.debug;
   } else {
-    self.debug = function noop() { };
+    this.debug = function noop() { };
   }
 }
 
@@ -41,37 +37,37 @@ if (typeof exports !== 'undefined') {
  * if not found
  */
 BasicCache.prototype.get = function(key) {
-  var d = Date.now();
   key = this.opts.prefix + key;
+  var obj = this.cache[key];
   if (this.cache[key] === undefined) {
-    this.debug('failed to pull "%s" from cache', key);
+    this.debug('miss cache for "%s"', key);
     return;
   }
-  if (d > this.cache[key].expires_at) {
-    this.debug('key "%s" expired at: %s', key, this.cache[key].expires_at);
+  if (obj.expires_at && Date.now() > obj.expires_at) {
+    this.debug('cache for "%s" expired at: %s', key, this.cache[key].expires_at);
     delete this.cache[key];
     return;
   }
-  this.debug('key "%s" pulled from cache', key);
+  this.debug('hit cache for "%s"', key);
   return this.cache[key].value;
 };
 
 /**
- * set an item in the cache
- *
- * expires defaults to 5 minutes
+ * Set an item in the cache
  */
 BasicCache.prototype.set = function(key, value, expires) {
   key = this.opts.prefix + key;
+  expires = expires || this.opts.expires;
   this.cache[key] = {
     value: value,
-    expires_at: Date.now() + (expires || 5*60*1000)
+    // use `undefined`, so comparison to any Date will return `false`
+    expires_at: expires ? Date.now() + expires : undefined
   };
   return this.cache[key].expires_at;
 };
 
 /**
- * remove an item from the cache
+ * Remove an item from the cache
  */
 BasicCache.prototype.remove = function(key) {
   key = this.opts.prefix + key;
@@ -105,8 +101,21 @@ BasicCache.prototype.purge = function() {
 };
 
 /**
+ * Start a purge timer
+ */
+BasicCache.prototype.startTimer = function(interval) {
+  var self = this;
+  self._purge_timer = setInterval(function() {
+    self.purge();
+  }, interval);
+};
+
+/**
  * Clear purge interval
  */
 BasicCache.prototype.sleep = function() {
-  clearInterval(this._purge_timer);
+  if (this.hasOwnProperty('_purge_timer')) {
+    clearInterval(this._purge_timer);
+    delete this._purge_timer;
+  }
 };
