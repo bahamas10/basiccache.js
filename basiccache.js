@@ -105,7 +105,8 @@ BasicCache.prototype.purge = function() {
  */
 BasicCache.prototype.startTimer = function(interval) {
   var self = this;
-  self._purge_timer = setInterval(function() {
+  this.cancelTimer();
+  this._purge_timer = setInterval(function() {
     self.purge();
   }, interval);
 };
@@ -113,7 +114,7 @@ BasicCache.prototype.startTimer = function(interval) {
 /**
  * Clear purge interval
  */
-BasicCache.prototype.sleep = function() {
+BasicCache.prototype.cancelTimer = function() {
   if (this.hasOwnProperty('_purge_timer')) {
     clearInterval(this._purge_timer);
     delete this._purge_timer;

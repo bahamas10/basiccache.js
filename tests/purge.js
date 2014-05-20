@@ -11,5 +11,5 @@ for (var i = 0; i < 10; i++) {
 
 setTimeout(function() {
   console.log('1s later, Remains %s item', Object.keys(cache.cache).length);
-  cache.sleep();
+  cache.cancelTimer();
 }, 1000)

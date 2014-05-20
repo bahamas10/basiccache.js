@@ -83,19 +83,24 @@ the cache will never expire.
 
 ### cache.remove(key)
 
-Remove an entry from the cache, no errors are thrown if the key doesn't exist or is already invalidated
+Remove an entry from the cache, no errors are thrown if the key doesn't exist or is already invalidated.
 
 ### cache.clear()
 
-Remove all entries from the cache
+Remove all entries from the cache.
 
 ### cache.purge()
 
-Remove expired items from the cache
+Remove expired items from the cache.
 
-### cache.sleep()
+### cache.startTimer()
 
-Clear the purgeInterval if it was set
+Start the timer for purging expired items.
+
+### cache.cancelTimer()
+
+Stop the purge timer.
+
 
 License
 -------
